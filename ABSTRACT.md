@@ -1,5 +1,40 @@
+The authors presented a new large scale multi-object tracking dataset in diverse sports scenes, coined as **SportsMOT Dataset**, where all players on the court are supposed to be tracked. It consists of 240 video sequences, over 150K frames and over 1.6M bounding boxes collected from 3 sports categories, including *basketball*, *volleyball* and *football*.
 
-Sample image template:
-<img src="https://github.com/dataset-ninja/gland-segmentation/assets/78355358/f158d0dd-71d5-41a2-aba5-4a5f57d54c35" alt="image" width="800">
+## Motivation
 
-<span style="font-size: smaller; font-style: italic;">Image description.</span>
+Multi-object tracking (MOT) stands as a cornerstone in computer vision tasks over recent decades, dedicated to pinpointing and associating objects within video sequences. Considerable attention from researchers has been directed towards diverse practical scenarios, including crowded street scenes, static dancing scenes, and driving scenarios, leading to significant advancements in MOT methodologies. However, the realm of sports scenes has often been neglected in this domain. In sports contexts, the focus typically centers on tracking players on the field for subsequent analysis, such as quantifying running distances, determining average speeds, and enabling automatic tactical analyses. Contemporary state-of-the-art trackers typically comprise various components to fulfill the tracking objective, encompassing object localization modules, motion-based object association modules, and appearance-based association modules. Nevertheless, these components encounter challenges when applied to sports scenes due to biases in the data distributions of prevalent human tracking benchmarks, such as [MOT17](https://motchallenge.net/data/MOT17/), [MOT20](https://motchallenge.net/data/MOT20/), and [DanceTrack](https://dancetrack.github.io/). These challenges stem from the fact that existing benchmarks, driven primarily by surveillance or self-driving applications, provide tracks for almost all individuals within scenes. However, in sports contexts like basketball or football games, the focus is primarily on tracking players on the court. Thus, specialized training platforms are necessary to adapt detectors to sports scenes adequately. Moreover, prevailing trackers highlighted in MOT17 and MOT20 emphasize Kalman Filter-based Intersection over Union (IoU) matching for object association, tailored to the slow and regular motion patterns observed in pedestrians. In contrast, DanceTrack emphasizes diverse motion patterns over fast movements, reflecting the frequent directional changes and relative position shifts observed in dancers. However, sports scenes present unique challenges characterized by fast and variable-speed movements of objects across adjacent frames. Players in professional sports events typically exhibit high speeds and frequently adjust their running speeds, presenting significant hurdles for existing motion-based association methodologies.
+
+ IoU on adjacent frames             |  Kalman-Filter-based IoU on adjacent frames.
+:-------------------------:|:-------------------------:
+![](https://github.com/dataset-ninja/sports-mot/assets/120389559/c5016dd9-1c9c-4057-a51f-71e3588a8a7e)  |  ![](https://github.com/dataset-ninja/sports-mot/assets/120389559/f890fd56-8052-4e57-99da-245e89e565a1)
+
+Consequently, there is a pressing need for motion-based association methods that are better suited to sports scenes. Furthermore, in contrast to the MOT17 and MOT20 datasets, which primarily feature street scenes, objects in sports scenes often exhibit less distinguishable appearances. This is due to several factors, including players wearing similar attire and frequent blurring caused by rapid camera or target motion. Unlike DanceTrack, where dancers typically wear similar clothing, players in sports scenes usually don jerseys with distinct numbers and adopt varying postures. Consequently, they contend that while objects in sports scenes share similar appearances, they possess enough distinguishable features to warrant the development of appearance models capable of generating more discriminative and comprehensive representations.
+
+## Dataset description
+
+Based on the analysis presented earlier, the authors propose the creation of a multi-object tracking dataset tailored specifically for sports scenes, termed as the SportsMOT. This dataset is characterized by its large-scale, high-quality nature and comprehensive annotations, covering every player on the court across various sports scenarios. SportsMOT comprises 240 videos, totaling over 150,000 frames and containing more than 1.6 million bounding boxes. These annotations span three categories of sports: *basketball*, *volleyball*, and *football*. To facilitate the adaptation of trackers to sports scenes, the authors have divided the dataset into training, validation, and test subsets, encompassing 45, 45, and 150 video sequences, respectively. SportsMOT is distinguished by two fundamental properties: 
+1) It features fast and variable-speed motion, necessitating the development of motion modeling associations capable of accommodating such dynamics. 
+2) Despite similarities in appearance among players, there are enough distinguishing features to warrant the creation of appearance models capable of generating more discriminative and extensive representations.
+
+## Video collection
+
+The authors have curated videos from three globally renowned sports *football*, *basketball*, and *volleyball* selecting high-quality footage from professional games such as those from the NCAA, Premier League, and Olympics. These videos were sourced from MultiSports, a comprehensive dataset focusing on spatio-temporal action localization within the realm of sports. Each sport category encompasses typical player formations and motion patterns, effectively capturing the diversity of sports scenarios. Only overhead shots from the sports game scenes were utilized, ensuring the exclusion of potentially extreme viewpoints. The resultant dataset comprises a total of 240 video sequences, each boasting 720p resolution and a frame rate of 25 FPS (frames per second). Adhering to the principles of multi-object tracking, every video clip underwent manual scrutiny to ensure the absence of abrupt viewpoint changes throughout the footage.
+
+## Annotation pipeline
+
+The authors annotate the collected video saccording to the following guidelines:
+* The entire athlete’s limbs and torso, excluding any other objects like balls touching the athlete’s body, are required to be annotated.
+* The annotators are asked to predict the bounding box of the athlete in the case of occlusion, as long as the athletes have a visible part of body. However, if half of the athletes’ torso is outside the view, annotators should just skip them.
+* The authors ask the annotators to confirm that each player has a unique ID throughout the whole clip.
+
+They developed a bespoke labeling tool specifically designed for SportsMOT, accompanied by a comprehensive manual for annotators. Upon initiating the annotation process for a new object, the labeling tool automatically assigns a unique identifier (ID) to the object and propagates the bounding box from the previous state to the current state, leveraging the capabilities of the single object tracker KCF. Subsequently, annotators refine the generated bounding boxes to enhance the overall annotation quality. Following a meticulous review of each annotation result, the authors meticulously refine any bounding boxes and ***person id*** that fail to meet the prescribed standards, thereby ensuring the creation of a high-quality dataset. Finally, bounding boxes deemed excessively small, where either the width (w) or height (h) falls below 5 pixels, are removed from consideration.
+
+| Category   | Frames | Tracks | Track Gap len. | Track len. per frame | Track Bboxes |
+|------------|--------|--------|----------------|-----------------------|--------------|
+| Basketball | 845.4  | 10     | 68.7           | 767.9                 | 9.1          |
+| Volleyball | 360.4  | 12     | 38.2           | 335.9                 | 11.2         |
+| Football   | 673.9  | 20.5   | 116.1          | 422.1                 | 12.8         |
+| Total      | 626.6  | 14.2   | 96.6           | 479.1                 | 10.8         |
+
+
+<span style="font-size: smaller; font-style: italic;"> Detailed statistics of the three categories in SportsMOT.</span>
