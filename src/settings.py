@@ -15,7 +15,7 @@ from dataset_tools.templates import (
 ##################################
 PROJECT_NAME: str = "SportsMOT"
 PROJECT_NAME_FULL: str = "SportsMOT Dataset"
-HIDE_DATASET = True  # set False when 100% sure about repo quality
+HIDE_DATASET = False  # set False when 100% sure about repo quality
 
 ##################################
 # * After uploading to instance ##
@@ -24,7 +24,7 @@ LICENSE: License = License.CC_BY_NC_4_0(source_url="https://github.com/MCG-NJU/S
 APPLICATIONS: List[Union[Industry, Domain, Research]] = [Industry.Sports()]
 CATEGORY: Category = Category.Sports()
 
-CV_TASKS: List[CVTask] = [CVTask.ObjectDetection()]
+CV_TASKS: List[CVTask] = [CVTask.ObjectDetection(), CVTask.Identification()]
 ANNOTATION_TYPES: List[AnnotationType] = [AnnotationType.ObjectDetection()]
 
 RELEASE_DATE: Optional[str] = "2023-04-13"  # e.g. "YYYY-MM-DD"
@@ -77,11 +77,11 @@ ORGANIZATION_URL: Optional[Union[str, List[str]]] = "https://mcg.nju.edu.cn/"
 # Set '__PRETEXT__' or '__POSTTEXT__' as a key with string value to add custom text. e.g. SLYTAGSPLIT = {'__POSTTEXT__':'some text}
 SLYTAGSPLIT: Optional[Dict[str, Union[List[str], str]]] = {
     "kinds of sports": ["basketball", "football", "volleyball"],
-    "__POSTTEXT__": "Additionally, every image marked with its ***sequence*** tag. Every label contains information about its ***person id***. Explore it in Supervisely labelling tool",
+    "__POSTTEXT__": "Additionally, every image marked with its ***sequence*** tag. Every label contains information about its ***person id***. Explore it in Supervisely labeling tool",
 }
 TAGS: Optional[
     List[Literal["multi-view", "synthetic", "simulation", "multi-camera", "multi-modal"]]
-] = None
+] = ["multi-object-detection"]
 
 
 SECTION_EXPLORE_CUSTOM_DATASETS: Optional[List[str]] = None
